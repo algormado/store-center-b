@@ -4,6 +4,7 @@ from config import app, db, api
 from models.delivery import Delivery
 from models.order import Order
 from models.storage_slot import Storage_slot
+from models.user_role import UserRole
 
 
 @app.route('/')
