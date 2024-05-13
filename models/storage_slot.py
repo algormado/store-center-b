@@ -7,7 +7,7 @@ from config import db
 
 
 
-class StorageSlot(db.Model,SerializerMixin):
+class Storage_slot(db.Model,SerializerMixin):
     __tablename__ = 'storage_slot'
     id = db.Column(db.Integer, primary_key=True)
     size = db.Column(db.String(10), nullable=False)  # small, medium, large
