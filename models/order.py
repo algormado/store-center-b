@@ -8,9 +8,9 @@ from config import db
 bcrypt = Bcrypt()
 
 class Order(db.Model, SerializerMixin):
-    __tablename__ = 'order'  
+    __tablename__ = 'orders'  
     id = db.Column(Integer, primary_key=True)
-    user_id = db.Column(Integer, ForeignKey('user.id'))
+    user_id = db.Column(Integer, ForeignKey('users.id'))
     storage_slot_id = db.Column(Integer, ForeignKey('storage_slot.id'))
     start_date = db.Column(Date)
     end_date = db.Column(Date)  
