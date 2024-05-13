@@ -128,7 +128,7 @@ class DeliveryByID(Resource):
     def delete(self, delivery_id):
         delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
-            Delivery.remove(delivery)
+            Delivery.remove(delivery) 
             return {}, 204
         else:
             return {'message': 'Delivery not found'}, 404
