@@ -13,7 +13,7 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
     _password_hash = db.Column(db.String)
-    role = db.Column(db.String, nullable=False) 
+    role = db.Column(db.String(10), nullable=False) 
     
     serialize_only = ('id', 'username', 'email')
 
