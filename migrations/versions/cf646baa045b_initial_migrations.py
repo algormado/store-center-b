@@ -1,8 +1,8 @@
 """initial migrations
 
-Revision ID: fbd8e7c0731a
+Revision ID: cf646baa045b
 Revises: 
-Create Date: 2024-05-14 00:54:40.383248
+Create Date: 2024-05-14 09:38:50.194991
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fbd8e7c0731a'
+revision = 'cf646baa045b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,8 +41,8 @@ def upgrade():
     sa.Column('storage_slot_id', sa.Integer(), nullable=False),
     sa.Column('start_date', sa.Date(), nullable=False),
     sa.Column('end_date', sa.Date(), nullable=False),
-    sa.Column('is_picked_up', sa.Boolean(), nullable=False),
-    sa.Column('is_delivered', sa.Boolean(), nullable=False),
+    sa.Column('is_picked_up', sa.Boolean(), nullable=True),
+    sa.Column('is_delivered', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['storage_slot_id'], ['storage_slot.id'], name=op.f('fk_order_storage_slot_id_storage_slot')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_order_user_id_user')),
     sa.PrimaryKeyConstraint('id')

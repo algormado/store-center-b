@@ -14,7 +14,7 @@ from models.order import Order
 from models.storage_slot import Storage_slot
 from models.user import User
 
-def seed_storage_slots(num_slots=20):
+def seed_storage_slots(num_slots=50):
     slot_sizes = ["small", "medium", "large"]
     slots = []
     for _ in range(num_slots):
@@ -31,16 +31,16 @@ def seed_storage_slots(num_slots=20):
 def seed_users(num_users=50):
     users = []
     for _ in range(num_users):
+        role = rc(["admin", "client", "employee"])
         user = User(
             username=fake.user_name(),
             email=fake.email(),
-            role="client"  # Assuming all seeded users are clients
+            role=role
         )
         users.append(user)
         db.session.add(user)
     db.session.commit()
     return users
-
 def seed_orders(num_orders=50):
     users = User.query.all()
     slots = Storage_slot.query.all()
