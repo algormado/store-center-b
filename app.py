@@ -2,7 +2,7 @@ from flask import request,session,jsonify,make_response
 from flask_restful import Resource
 from config import app, db, api
 from models.delivery import Delivery
-from models.order import Order
+from models.order import Orders
 from models.storage_slot import Storage_slot
 from models.user import User
 
