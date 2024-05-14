@@ -2,7 +2,7 @@ from flask import request,session,jsonify,make_response
 from flask_restful import Resource
 from config import app, db, api
 from models.delivery import Delivery
-from models.order import Order
+from models.order import Orders
 from models.storage_slot import Storage_slot
 from models.user_role import UserRole
 
@@ -17,6 +17,24 @@ class ClearSession(Resource):
         return {}, 204
 
 class OrderResource(Resource):
+    def get(self):
+        # Implement the logic to retrieve all orders
+        orders = [
+            {'id': 1, 'customer': 'John Doe', 'items': ['Item 1', 'Item 2']},
+            {'id': 2, 'customer': 'Jane Smith', 'items': ['Item 3', 'Item 4']}
+        ]
+        return orders, 200
+
+    def post(self):
+        # Implement the logic to create a new order
+        data = request.get_json()
+        new_order = {
+            'id': len(orders) + 1,
+            'customer': data['customer'],
+            'items': data['items']
+        }
+        orders.append(new_order)
+        return new_order, 201
    
         pass
     
