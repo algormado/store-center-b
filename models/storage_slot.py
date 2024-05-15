@@ -10,6 +10,15 @@ from config import db
 class Storage_slot(db.Model,SerializerMixin):
     __tablename__ = 'storage_slot'
     id = db.Column(db.Integer, primary_key=True)
-    size = db.Column(db.String(10), nullable=False)  # small, medium, large
-    availability = db.Column(db.Boolean, nullable=False, default=True)
-    price = db.Column(db.Float, nullable=False)
+    size = db.Column(db.String(10), nullable=False) 
+    availability = db.Column(db.Integer)
+    price = db.Column(db.Integer)
+    
+    
+    
+    def __init__(self, size, availability, price):
+        self.size = size
+        self.availability = availability
+        self.price = price
+
+   
