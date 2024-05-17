@@ -67,8 +67,7 @@ def seed_deliveries(num_deliveries=20):
     orders = Order.query.all()
     deliveries = []
     for _ in range(num_deliveries):
-        delivery_date = datetime.now() + timedelta(days=randint(1, 30))  # Random delivery date within the next 30 days
-        # Select a random order
+        delivery_date = datetime.now() + timedelta(days=randint(1, 30))  
         order = rc(orders)
         # Create the delivery using order_id
         delivery = Delivery(
