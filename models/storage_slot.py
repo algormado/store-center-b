@@ -13,12 +13,13 @@ class Storage_slot(db.Model,SerializerMixin):
     size = db.Column(db.String(10), nullable=False) 
     availability =db.Column(Boolean)
     price = db.Column(db.Integer)
+    unit= db.Column (db.JSON,nullable = False)
     
     
     
-    def __init__(self, size, availability, price):
+    def __init__(self, size,  price,unit):
         self.size = size
-        self.availability = availability
         self.price = price
+        self.unit = unit
 
    
