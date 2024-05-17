@@ -6,11 +6,12 @@ from config import db
 
 
 class Delivery(db.Model):
-    __tablename__ = 'deliveries'
+    __tablename__ = 'delivery'
     id = db.Column(db.Integer, primary_key=True)
-    booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     delivery_date = db.Column(db.Date, nullable=False)
     delivery_address = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
         return f"<Delivery id={self.id}, booking_id={self.booking_id}, delivery_date={self.delivery_date}, delivery_address={self.delivery_address}>"
+ 

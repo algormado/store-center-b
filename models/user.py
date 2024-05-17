@@ -3,20 +3,20 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from flask_bcrypt import Bcrypt
 from config import db
-from enum import Enum
+
 
 bcrypt = Bcrypt()
 
 class User(db.Model, SerializerMixin):
-    __tablename__ = 'users'
-
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
     _password_hash = db.Column(db.String)
-    role = db.Column(db.Enum(UserRole, name='user_role'), nullable=False, default=UserRole.USER) 
+    role = db.Column(db.String, nullable=False)
     
     serialize_only = ('id', 'username', 'email')
+    
 
     @validates('username')
     def validate_username(self, key, username):
@@ -35,7 +35,7 @@ class User(db.Model, SerializerMixin):
     @validates('role')
     def validate_role(self, key, role):
         try:
-            UserRole(role)
+            (role)
         except ValueError:
             raise ValueError("Role must be 'admin' or 'user'")
         return role
