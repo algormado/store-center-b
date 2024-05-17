@@ -11,7 +11,7 @@ class Storage_slot(db.Model,SerializerMixin):
     __tablename__ = 'storage_slot'
     id = db.Column(db.Integer, primary_key=True)
     size = db.Column(db.String(10), nullable=False) 
-    availability = db.Column(db.Integer)
+    availability =db.Column(Boolean)
     price = db.Column(db.Integer)
     
     

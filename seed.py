@@ -20,7 +20,7 @@ def seed_storage_slots(num_slots=50):
     for _ in range(num_slots):
         slot = Storage_slot(
             size=rc(slot_sizes),
-            availability=True,
+        
             price=randint(50, 200)
         )
         slots.append(slot)
