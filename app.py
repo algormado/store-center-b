@@ -102,7 +102,12 @@ class DeliveryByID(Resource):
     def get(self, delivery_id):
         delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
-            return delivery, 200
+            return {
+                'id': delivery['id'],
+                'client_id': delivery['client_id'],
+                'client_name': delivery['client_name'],
+                'status': delivery['status']
+            }, 200
         else:
             return {'message': 'Delivery not found'}, 404
 
@@ -111,7 +116,12 @@ class DeliveryByID(Resource):
         delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
             delivery['status'] = data['status']
-            return delivery, 200
+            return {
+                'id': delivery['id'],
+                'client_id': delivery['client_id'],
+                'client_name': delivery['client_name'],
+                'status': delivery['status']
+            }, 200
         else:
             return {'message': 'Delivery not found'}, 404
 
@@ -122,6 +132,7 @@ class DeliveryByID(Resource):
             return {}, 204
         else:
             return {'message': 'Delivery not found'}, 404
+
 class Storage_Slot(Resource):
     def get(self):
         slots = [slot.to_dict() for slot in Storage_slot.query.all()]
