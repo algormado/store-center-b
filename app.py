@@ -19,7 +19,6 @@ class ClearSession(Resource):
 
 class OrderResource(Resource):
     def get(self):
-        # Implement the logic to retrieve all orders
         orders = [
             {'id': 1, 'customer': 'John Doe', 'items': ['Item 1', 'Item 2']},
             {'id': 2, 'customer': 'Jane Smith', 'items': ['Item 3', 'Item 4']}
@@ -27,19 +26,17 @@ class OrderResource(Resource):
         return orders, 200
 
     def post(self):
-        # Implement the logic to create a new order
         data = request.get_json()
         new_order = {
-            'id': len(orders) + 1,
+            'id': len(Order) + 1,
             'customer': data['customer'],
             'items': data['items']
         }
-        orders.append(new_order)
+        Order.append(new_order)
         return new_order, 201
 
 class OrderResource(Resource):
     def get(self):
-        # Implement the logic to retrieve all orders
         orders = [
             {'id': 1, 'customer': 'John Doe', 'items': ['Item 1', 'Item 2']},
             {'id': 2, 'customer': 'Jane Smith', 'items': ['Item 3', 'Item 4']}
@@ -47,29 +44,26 @@ class OrderResource(Resource):
         return orders, 200
 
     def post(self):
-        # Implement the logic to create a new order
         data = request.get_json()
         new_order = {
-            'id': len(orders) + 1,
+            'id': len(Order) + 1,
             'customer': data['customer'],
             'items': data['items']
         }
-        orders.append(new_order)
+        Order.append(new_order)
         return new_order, 201
 
 class OrderByID(Resource):
     def get(self, order_id):
-        # Implement the logic to retrieve a specific order by ID
-        order = next((o for o in orders if o['id'] == order_id), None)
+        order = next((o for o in Order if o['id'] == order_id), None)
         if order:
             return order, 200
         else:
             return {'message': 'Order not found'}, 404
 
     def put(self, order_id):
-        # Implement the logic to update a specific order by ID
         data = request.get_json()
-        order = next((o for o in orders if o['id'] == order_id), None)
+        order = next((o for o in Order if o['id'] == order_id), None)
         if order:
             order['customer'] = data['customer']
             order['items'] = data['items']
@@ -78,17 +72,15 @@ class OrderByID(Resource):
             return {'message': 'Order not found'}, 404
 
     def delete(self, order_id):
-        # Implement the logic to delete a specific order by ID
-        order = next((o for o in orders if o['id'] == order_id), None)
+        order = next((o for o in Order if o['id'] == order_id), None)
         if order:
-            orders.remove(order)
+            Order.remove(order)
             return {}, 204
         else:
             return {'message': 'Order not found'}, 404
 
 class DeliveryResource(Resource):
     def get(self):
-        # Implement the logic to retrieve all deliveries
         deliveries = [
             {'id': 1, 'order_id': 1, 'status': 'Shipped'},
             {'id': 2, 'order_id': 2, 'status': 'Delivered'}
@@ -99,26 +91,24 @@ class DeliveryResource(Resource):
         # Implement the logic to create a new delivery
         data = request.get_json()
         new_delivery = {
-            'id': len(deliveries) + 1,
+            'id': len(Delivery) + 1,
             'order_id': data['order_id'],
             'status': 'Pending'
         }
-        deliveries.append(new_delivery)
+        Delivery.append(new_delivery)
         return new_delivery, 201
 
 class DeliveryByID(Resource):
     def get(self, delivery_id):
-        # Implement the logic to retrieve a specific delivery by ID
-        delivery = next((d for d in deliveries if d['id'] == delivery_id), None)
+        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
             return delivery, 200
         else:
             return {'message': 'Delivery not found'}, 404
 
     def put(self, delivery_id):
-        # Implement the logic to update a specific delivery by ID
         data = request.get_json()
-        delivery = next((d for d in deliveries if d['id'] == delivery_id), None)
+        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
             delivery['status'] = data['status']
             return delivery, 200
@@ -126,10 +116,9 @@ class DeliveryByID(Resource):
             return {'message': 'Delivery not found'}, 404
 
     def delete(self, delivery_id):
-        # Implement the logic to delete a specific delivery by ID
-        delivery = next((d for d in deliveries if d['id'] == delivery_id), None)
+        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
         if delivery:
-            deliveries.remove(delivery)
+            Delivery.remove(delivery)
             return {}, 204
         else:
             return {'message': 'Delivery not found'}, 404
