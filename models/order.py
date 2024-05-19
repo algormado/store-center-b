@@ -1,15 +1,19 @@
-from sqlalchemy import Column, Integer, Date, Boolean, ForeignKey, DECIMAL
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import validates
+from sqlalchemy import Integer, ForeignKey, Date, Boolean
+from flask_bcrypt import Bcrypt
+from config import db
 
-Base = declarative_base()
+bcrypt = Bcrypt()
 
-class Order(Base):
-    _tablename_ = 'order'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    storage_slot_id = Column(Integer, ForeignKey('storage_slot.id'))
-    start_date = Column(Date)
-    end_date = Column(Boolean)
-    is_picked_up = Column(Boolean)
-    is_delivered = Column(Boolean)
+
+class Order(db.Model, SerializerMixin):
+    __tablename__ = 'order'  
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    storage_slot_id = db.Column(db.Integer, db.ForeignKey('storage_slot.id'), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    is_picked_up = db.Column(Boolean)
+    is_delivered = db.Column(Boolean)
