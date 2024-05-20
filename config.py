@@ -14,7 +14,7 @@ import os
 
 # Instantiate app, set attributes
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://store_center_user:8ji6RCDi2kvx302Ysf15aJnWnC71PUkO@dpg-cp5h40n79t8c73eu6jk0-a.oregon-postgres.render.com/store_center'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://store_center_l8gb_user:r8PCFhVJNzwZ4n7peJ9qGYZeA9jGm2lD@dpg-cp5jas0l5elc73e5e3tg-a.oregon-postgres.render.com/store_center_l8gb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.json.compact = False
@@ -30,8 +30,4 @@ db.init_app(app)
 
 api = Api(app)
 bcrypt = Bcrypt(app)
-# Instantiate REST API
-
-
-# Instantiate CORS
 
