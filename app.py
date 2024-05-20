@@ -5,6 +5,7 @@ from models.delivery import Delivery
 from models.order import Order
 from models.storage_slot import Storage_slot
 from models.user import User
+from models.unit import Unit
 
 
 
@@ -138,22 +139,75 @@ class Storage_Slot(Resource):
         slots = [slot.to_dict() for slot in Storage_slot.query.all()]
         return make_response(jsonify(slots), 200)
     
+    
     def post(self):
         data = request.get_json()
-        if not all(key in data for key in ['availability', 'size', 'price']):
-            return make_response(jsonify({"error": "Validation error: Missing required fields."}), 400)
-
-        try:
-            slot = Storage_slot(availability=data['availability'], size=data['size'], price=data['price'])
-            db.session.add(slot)
-            db.session.commit()
-            return make_response(jsonify({"message": "Storage slot created successfully.", "slot": slot.to_dict()}), 201)
-        except Exception as e:
-            db.session.rollback()
-            return make_response(jsonify({"error": "Failed to create storage slot.", "details": str(e)}), 400)
-
-        
+        new_slot = Storage_slot(
+            size=data['size'],
+            price=data['price'],
+            unit_details=data['unit_details'],
+            what_can_fit=data['what_can_fit']
+        )
+        db.session.add(new_slot)
+        db.session.commit()
+        return make_response(jsonify(new_slot.to_dict()), 201)
     
+class UnitResource (Resource):
+    def get(self):
+        units = Unit.query.all()
+        return make_response(jsonify([unit.to_dict() for unit in units]), 200)
+    
+    def post(self):
+        data = request.get_json()
+        new_unit = Unit(
+            unit_number=data['unit_number'],
+            features=data['features'],
+            images=data['images'],
+            storage_slot_id=data['storage_slot_id']
+        )
+        db.session.add(new_unit)
+        db.session.commit()
+        return make_response(jsonify(new_unit.to_dict()), 201)
+    
+class UnitByID(Resource):
+    def get(self, id):
+        unit = Unit.query.get(id)
+        if not unit:
+            ValueError(404, description="Unit not found")
+        return make_response(jsonify(unit.to_dict()), 200)
+    
+    def patch(self, id):
+        unit = Unit.query.get(id)
+        if not unit:
+            ValueError(404, description="Unit not found")
+        
+        data = request.get_json()
+        if 'unit_number' in data:
+            unit.unit_number = data['unit_number']
+        if 'features' in data:
+            unit.features = data['features']
+        if 'images' in data:
+            unit.images = data['images']
+        if 'storage_slot_id' in data:
+            unit.storage_slot_id = data['storage_slot_id']
+        
+        db.session.commit()
+        return make_response(jsonify(unit.to_dict()), 200)
+
+    def delete(self, id):
+        unit = Unit.query.get(id)
+        if not unit:
+            response_dict = {"error": "Unit not found"}
+            return make_response(jsonify(response_dict), 404)
+            
+        
+            
+            
+        
+        db.session.delete(unit)
+        db.session.commit()
+        return make_response(jsonify({"message": "Unit deleted successfully."}), 200)
+
 class Storage_SlotByID(Resource):
     def get(self, id):
         storage_slot = Storage_slot.query.filter_by(id=id).first()
@@ -252,6 +306,9 @@ class CheckSession(Resource):
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(OrderResource, '/orders')
 api.add_resource(OrderByID, '/orders/<int:id>')
+api.add_resource(UnitResource, '/units')
+api.add_resource(UnitByID, '/units/<int:id>')
+
 api.add_resource(DeliveryResource, '/deliveries')
 api.add_resource(DeliveryByID, '/deliveries/<int:id>')
 api.add_resource(Storage_Slot, '/storage_slots')

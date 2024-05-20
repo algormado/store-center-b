@@ -12,26 +12,50 @@ from app import app, db
 from models.delivery import Delivery
 from models.order import Order
 from models.storage_slot import Storage_slot
+from models.unit import Unit  # Ensure this path matches your project structure
 from models.user import User
 
 def seed_storage_slots(num_slots=50):
     slot_sizes = {
-        "small": ["5'x5'", "5'x10'", "5'x15'"],
-        "medium": ["10'x10'", "10'x15'", "10'x20'",],
-        "large": ["15'x15'", "20'x20'", "20'x25'",]
+        "small": {"dimensions": ["5'x5'", "5'x10'", "5'x15'"], "what_can_fit": ["Small items like bags, suitcases, and boxes", "Contents of a small one-bedroom apartment", "Seasonal decorations", "Sports equipment"]},
+        "medium": {"dimensions": ["10'x10'", "10'x15'", "10'x20'"], "what_can_fit": ["Furniture from a one or two-bedroom apartment", "Appliances", "Large boxes", "Seasonal items and sports equipment"]},
+        "large": {"dimensions": ["15'x15'", "20'x20'", "20'x25'"], "what_can_fit": ["Contents of a three to four-bedroom house", "Major appliances", "Large furniture items", "Large boxes", "Commercial inventory"]}
     }
+    
     slots = []
     for _ in range(num_slots):
         size = rc(list(slot_sizes.keys()))
         slot = Storage_slot(
             size=size,
             price=randint(50, 200),
-            unit=slot_sizes[size]
+            unit_details ={"squareFeet": randint(25, 200), "size": rc(slot_sizes[size]["dimensions"])},
+            what_can_fit=slot_sizes[size]["what_can_fit"]
         )
         slots.append(slot)
         db.session.add(slot)
     db.session.commit()
     return slots
+
+def seed_units(storage_slots):
+    features_pool = [
+        ["Climate controlled", "24/7 access", "Ground floor"],
+        ["Climate controlled", "24/7 access", "Drive-up access"],
+        ["Climate controlled", "24/7 access", "Ground floor", "Drive-up access", "Security cameras"]
+    ]
+    
+    units = []
+    for slot in storage_slots:
+        for i in range(randint(1, 5)):  # Each storage slot can have multiple units
+            unit = Unit(
+                unit_number=f"{slot.size[0].upper()}{randint(100, 999)}",
+                features=rc(features_pool),
+                images=[f"https://example.com/images/{slot.size}-unit-{i+1}.jpg"],
+                storage_slot_id=slot.id
+            )
+            units.append(unit)
+            db.session.add(unit)
+    db.session.commit()
+    return units
 
 def seed_users(num_users=50):
     fake = Faker()
@@ -91,6 +115,7 @@ if __name__ == '__main__':
         print("Clearing db...")
         Delivery.query.delete()
         Order.query.delete()
+        Unit.query.delete()
         Storage_slot.query.delete()
         User.query.delete()
 
@@ -98,6 +123,9 @@ if __name__ == '__main__':
 
         print("Seeding storage slots...")
         storage_slots = seed_storage_slots()
+
+        print("Seeding units...")
+        units = seed_units(storage_slots)
 
         print("Seeding users...")
         users = seed_users()
