@@ -165,7 +165,8 @@ class Storage_SlotByID(Resource):
             'id': storage_slot.id,
             'size': storage_slot.size,
             'availability': storage_slot.availability,
-            'price': storage_slot.price
+            'price': storage_slot.price,
+            'unit' : storage_slot.unit,
         }
         
         return make_response(jsonify(response_data), 200)
