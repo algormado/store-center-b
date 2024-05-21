@@ -48,6 +48,3 @@ class Order(db.Model, SerializerMixin):
             'item': self.item
             
         }
-        
-        
-   
