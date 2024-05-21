@@ -20,119 +20,116 @@ class ClearSession(Resource):
 
 class OrderResource(Resource):
     def get(self):
-        orders = [
-            {'id': 1, 'customer': 'John Doe', 'items': ['Item 1', 'Item 2']},
-            {'id': 2, 'customer': 'Jane Smith', 'items': ['Item 3', 'Item 4']}
-        ]
-        return orders, 200
-
+       orders = Order.query.all()
+       return make_response(jsonify([order.to_dict() for order in orders]), 200)
+    
     def post(self):
         data = request.get_json()
-        new_order = {
-            'id': len(Order) + 1,
-            'customer': data['customer'],
-            'items': data['items']
-        }
-        Order.append(new_order)
-        return new_order, 201
-
-class OrderResource(Resource):
-    def get(self):
-        orders = [
-            {'id': 1, 'customer': 'John Doe', 'items': ['Item 1', 'Item 2']},
-            {'id': 2, 'customer': 'Jane Smith', 'items': ['Item 3', 'Item 4']}
-        ]
-        return orders, 200
-
-    def post(self):
-        data = request.get_json()
-        new_order = {
-            'id': len(Order) + 1,
-            'customer': data['customer'],
-            'items': data['items']
-        }
-        Order.append(new_order)
-        return new_order, 201
+        new_order = Order(
+            user_id=data['user_id'],
+            storage_slot_id=data['storage_slot_id'],
+            start_date=data['start_date'],
+            end_date=data['end_date'],
+            item=data['item'],  
+            is_picked_up=data.get('is_picked_up', False),
+            is_delivered=data.get('is_delivered', False)
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        return make_response(jsonify(new_order.to_dict()), 201)
 
 class OrderByID(Resource):
-    def get(self, order_id):
-        order = next((o for o in Order if o['id'] == order_id), None)
-        if order:
-            return order, 200
-        else:
-            return {'message': 'Order not found'}, 404
-
-    def put(self, order_id):
+    def get(self, id):
+        order = Order.query.get(id)
+        if not order:
+            ValueError(404, description="Order not found")
+        return make_response(jsonify(order.to_dict()), 200)
+    
+    def patch(self, id):
+        order = Order.query.get(id)
+        if not order:
+            ValueError(404, description="Order not found")
+        
         data = request.get_json()
-        order = next((o for o in Order if o['id'] == order_id), None)
-        if order:
-            order['customer'] = data['customer']
-            order['items'] = data['items']
-            return order, 200
-        else:
-            return {'message': 'Order not found'}, 404
+        if 'user_id' in data:
+            order.user_id = data['user_id']
+        if 'storage_slot_id' in data:
+            order.storage_slot_id = data['storage_slot_id']
+        if 'start_date' in data:
+            order.start_date = data['start_date']
+        if 'end_date' in data:
+            order.end_date = data['end_date']
+        if 'item' in data:  # New field
+            order.item = data['item']
+        if 'is_picked_up' in data:
+            order.is_picked_up = data['is_picked_up']
+        if 'is_delivered' in data:
+            order.is_delivered = data['is_delivered']
+        
+        db.session.commit()
+        return make_response(jsonify(order.to_dict()), 200)
 
-    def delete(self, order_id):
-        order = next((o for o in Order if o['id'] == order_id), None)
-        if order:
-            Order.remove(order)
-            return {}, 204
-        else:
-            return {'message': 'Order not found'}, 404
+    def delete(self, id):
+        order = Order.query.get(id)
+        if not order:
+            ValueError(404, description="Order not found")
+        
+        db.session.delete(order)
+        db.session.commit()
+        return '', 204
 
 class DeliveryResource(Resource):
     def get(self):
-        deliveries = [
-            {'id': 1, 'order_id': 1, 'status': 'Shipped'},
-            {'id': 2, 'order_id': 2, 'status': 'Delivered'}
-        ]
-        return deliveries, 200
-
+        deliveries = Delivery.query.all()
+        return make_response(jsonify([delivery.to_dict() for delivery in deliveries]), 200)
+    
+    
     def post(self):
-        # Implement the logic to create a new delivery
         data = request.get_json()
-        new_delivery = {
-            'id': len(Delivery) + 1,
-            'order_id': data['order_id'],
-            'status': 'Pending'
-        }
-        Delivery.append(new_delivery)
-        return new_delivery, 201
+        new_delivery = Delivery(
+            order_id=data['order_id'],
+            delivery_date=data['delivery_date'],
+            delivery_address=data['delivery_address'],
+            pickup_location=data['pickup_location']  
+        )
+        db.session.add(new_delivery)
+        db.session.commit()
+        return make_response(jsonify(new_delivery.to_dict()), 201)
+
 
 class DeliveryByID(Resource):
-    def get(self, delivery_id):
-        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
-        if delivery:
-            return {
-                'id': delivery['id'],
-                'client_id': delivery['client_id'],
-                'client_name': delivery['client_name'],
-                'status': delivery['status']
-            }, 200
-        else:
-            return {'message': 'Delivery not found'}, 404
-
-    def put(self, delivery_id):
+    def get(self, id):
+        delivery = Delivery.query.get(id)
+        if not delivery:
+            ValueError(404, description="Delivery not found")
+        return make_response(jsonify(delivery.to_dict()), 200)
+    
+    def patch(self, id):
+        delivery = Delivery.query.get(id)
+        if not delivery:
+            ValueError(404, description="Delivery not found")
+        
         data = request.get_json()
-        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
-        if delivery:
-            delivery['status'] = data['status']
-            return {
-                'id': delivery['id'],
-                'client_id': delivery['client_id'],
-                'client_name': delivery['client_name'],
-                'status': delivery['status']
-            }, 200
-        else:
-            return {'message': 'Delivery not found'}, 404
+        if 'order_id' in data:
+            delivery.order_id = data['order_id']
+        if 'delivery_date' in data:
+            delivery.delivery_date = data['delivery_date']
+        if 'delivery_address' in data:
+            delivery.delivery_address = data['delivery_address']
+        if 'pickup_location' in data:  # New field
+            delivery.pickup_location = data['pickup_location']
+        
+        db.session.commit()
+        return make_response(jsonify(delivery.to_dict()), 200)
 
-    def delete(self, delivery_id):
-        delivery = next((d for d in Delivery if d['id'] == delivery_id), None)
-        if delivery:
-            Delivery.remove(delivery) 
-            return {}, 204
-        else:
-            return {'message': 'Delivery not found'}, 404
+    def delete(self, id):
+        delivery = Delivery.query.get(id)
+        if not delivery:
+            ValueError(404, description="Delivery not found")
+        
+        db.session.delete(delivery)
+        db.session.commit()
+        return '', 204
 
 class Storage_Slot(Resource):
     def get(self):
@@ -160,7 +157,7 @@ class UnitResource (Resource):
     def post(self):
         data = request.get_json()
         new_unit = Unit(
-            unit_number=data['unit_number'],
+            
             features=data['features'],
             images=data['images'],
             storage_slot_id=data['storage_slot_id']
@@ -199,9 +196,6 @@ class UnitByID(Resource):
         if not unit:
             response_dict = {"error": "Unit not found"}
             return make_response(jsonify(response_dict), 404)
-            
-        
-            
             
         
         db.session.delete(unit)

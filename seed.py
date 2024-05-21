@@ -3,6 +3,7 @@
 # Standard library imports
 from random import randint, choice as rc
 from datetime import datetime, timedelta
+import random
 
 # Remote library imports
 from faker import Faker
@@ -29,7 +30,8 @@ def seed_storage_slots(num_slots=50):
             size=size,
             price=randint(50, 200),
             unit_details ={"squareFeet": randint(25, 200), "size": rc(slot_sizes[size]["dimensions"])},
-            what_can_fit=slot_sizes[size]["what_can_fit"]
+            what_can_fit=slot_sizes[size]["what_can_fit"],
+            availability=False 
         )
         slots.append(slot)
         db.session.add(slot)
@@ -48,7 +50,7 @@ def seed_units(storage_slots):
 
     units = []
     for slot in storage_slots:
-        for i in range(random.randint(1, 5)):  # Each storage slot can have multiple units
+        for i in range(randint(1, 5)):  
             unit = Unit(
                 unit_number=f"{slot.size[0].upper()}{random.randint(100, 999)}",
                 features=random.choice(features_pool),
@@ -62,14 +64,15 @@ def seed_units(storage_slots):
 
 
 def seed_users(num_users=50):
-    fake = Faker()
     users = []
     for _ in range(num_users):
         role = rc(["admin", "client", "employee"])
         user = User(
             username=fake.user_name(),
             email=fake.email(),
-            role=role
+            role=role,
+            phone_no=fake.phone_number(),
+            password="password" 
         )
         users.append(user)
         db.session.add(user)
@@ -79,22 +82,28 @@ def seed_users(num_users=50):
 def seed_orders(num_orders=50):
     users = User.query.all()
     slots = Storage_slot.query.all()
-    orders = []
+    items = ["TV", "Food", "Furniture", "Clothing", "Electronics", "Books", "Toys", "Appliances", "Tools", "Sports Equipment"]
+
     for _ in range(num_orders):
-        start_date = datetime.now() - timedelta(days=randint(1, 30))
-        end_date = start_date + timedelta(days=randint(1, 30))
+        start_date = datetime.now() - timedelta(days=random.randint(1, 30))
+        end_date = start_date + timedelta(days=random.randint(1, 30))
         user = rc(users)
         storage_slot = rc(slots)
+        item = rc(items)
+
         order = Order(
             user_id=user.id,
             storage_slot_id=storage_slot.id,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            item=item,
+            is_picked_up = False,
+            is_delivered = False
+            
         )
-        orders.append(order)
+
         db.session.add(order)
     db.session.commit()
-    return orders
 
 def seed_deliveries(num_deliveries=20):
     fake = Faker()
@@ -106,7 +115,8 @@ def seed_deliveries(num_deliveries=20):
         delivery = Delivery(
             order_id=order.id,
             delivery_date=delivery_date,
-            delivery_address=fake.address()
+            delivery_address="Nairobi",  # Set the delivery address to "Nairobi"
+            pickup_location=fake.address()  # Continue using Faker for pickup location
         )
         deliveries.append(delivery)
         db.session.add(delivery)
