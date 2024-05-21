@@ -297,6 +297,47 @@ class CheckSession(Resource):
                 return user.to_dict()
         
         return {},204
+    
+class UserResource(Resource):
+    def get(self):
+        users = User.query.all()
+        return [user.to_dict() for user in users], 200
+
+    def post(self):
+        data = request.get_json()
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=data['password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return new_user.to_dict(), 201
+
+    def patch(self, id):
+        user = User.query.get(id)
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        data = request.get_json()
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if 'password' in data:
+            user.password_hash = data['password']
+
+        db.session.commit()
+        return user.to_dict(), 200
+
+    def delete(self, id):
+        user = User.query.get(id)
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        db.session.delete(user)
+        db.session.commit()
+        return {}, 204
 
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(OrderResource, '/orders')
@@ -312,6 +353,7 @@ api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(UserResource, '/users', endpoint='users')
 
 if __name__ == '__main__':
     app.run( debug=True)
