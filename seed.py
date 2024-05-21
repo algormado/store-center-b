@@ -36,26 +36,30 @@ def seed_storage_slots(num_slots=50):
     db.session.commit()
     return slots
 
+import random
+from models import Unit
+
 def seed_units(storage_slots):
     features_pool = [
         ["Climate controlled", "24/7 access", "Ground floor"],
         ["Climate controlled", "24/7 access", "Drive-up access"],
         ["Climate controlled", "24/7 access", "Ground floor", "Drive-up access", "Security cameras"]
     ]
-    
+
     units = []
     for slot in storage_slots:
-        for i in range(randint(1, 5)):  # Each storage slot can have multiple units
+        for i in range(random.randint(1, 5)):  # Each storage slot can have multiple units
             unit = Unit(
-                unit_number=f"{slot.size[0].upper()}{randint(100, 999)}",
-                features=rc(features_pool),
-                images=[f"https://example.com/images/{slot.size}-unit-{i+1}.jpg"],
+                unit_number=f"{slot.size[0].upper()}{random.randint(100, 999)}",
+                features=random.choice(features_pool),
+                images=[f"https://example.com/images/{slot.size}-{slot.square_feet}sqft-unit-{i+1}.jpg"],
                 storage_slot_id=slot.id
             )
             units.append(unit)
             db.session.add(unit)
     db.session.commit()
     return units
+
 
 def seed_users(num_users=50):
     fake = Faker()
