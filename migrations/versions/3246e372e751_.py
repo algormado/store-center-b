@@ -1,8 +1,8 @@
-"""initial migrations
+"""empty message
 
-Revision ID: e99837f8e431
+Revision ID: 3246e372e751
 Revises: 
-Create Date: 2024-05-21 11:54:28.339355
+Create Date: 2024-05-21 21:35:28.800305
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e99837f8e431'
+revision = '3246e372e751'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('storage_slot',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('size', sa.String(length=10), nullable=False),
-    sa.Column('availability', sa.Boolean(), nullable=True),
+    sa.Column('availability', sa.Boolean(), nullable=False),
     sa.Column('price', sa.Integer(), nullable=True),
     sa.Column('unit_details', sa.JSON(), nullable=False),
     sa.Column('what_can_fit', sa.JSON(), nullable=False),
@@ -44,9 +44,8 @@ def upgrade():
     sa.Column('storage_slot_id', sa.Integer(), nullable=False),
     sa.Column('start_date', sa.Date(), nullable=False),
     sa.Column('end_date', sa.Date(), nullable=False),
-    sa.Column('is_picked_up', sa.Boolean(), nullable=True),
-    sa.Column('is_delivered', sa.Boolean(), nullable=True),
-    sa.Column('item', sa.String(length=255), nullable=False),
+    sa.Column('is_picked_up', sa.Boolean(), nullable=False),
+    sa.Column('is_delivered', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['storage_slot_id'], ['storage_slot.id'], name=op.f('fk_order_storage_slot_id_storage_slot')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_order_user_id_user')),
     sa.PrimaryKeyConstraint('id')

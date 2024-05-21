@@ -157,7 +157,7 @@ class UnitResource (Resource):
     def post(self):
         data = request.get_json()
         new_unit = Unit(
-            unit_number=data['unit_number'],
+            
             features=data['features'],
             images=data['images'],
             storage_slot_id=data['storage_slot_id']

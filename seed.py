@@ -30,7 +30,8 @@ def seed_storage_slots(num_slots=50):
             size=size,
             price=randint(50, 200),
             unit_details ={"squareFeet": randint(25, 200), "size": rc(slot_sizes[size]["dimensions"])},
-            what_can_fit=slot_sizes[size]["what_can_fit"]
+            what_can_fit=slot_sizes[size]["what_can_fit"],
+            availability=False 
         )
         slots.append(slot)
         db.session.add(slot)
@@ -96,6 +97,9 @@ def seed_orders(num_orders=50):
             start_date=start_date,
             end_date=end_date,
             item=item,
+            is_picked_up = False,
+            is_delivered = False
+            
         )
 
         db.session.add(order)
@@ -111,8 +115,8 @@ def seed_deliveries(num_deliveries=20):
         delivery = Delivery(
             order_id=order.id,
             delivery_date=delivery_date,
-            delivery_address=fake.address(),
-            pickup_location=fake.address()  
+            delivery_address="Nairobi",  # Set the delivery address to "Nairobi"
+            pickup_location=fake.address()  # Continue using Faker for pickup location
         )
         deliveries.append(delivery)
         db.session.add(delivery)
