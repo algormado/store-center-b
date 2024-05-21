@@ -1,8 +1,8 @@
 """initial migrations
 
-Revision ID: 2fe61ddc1773
+Revision ID: e99837f8e431
 Revises: 
-Create Date: 2024-05-20 18:48:02.269504
+Create Date: 2024-05-21 11:54:28.339355
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2fe61ddc1773'
+revision = 'e99837f8e431'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,7 @@ def upgrade():
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('_password_hash', sa.String(), nullable=True),
     sa.Column('role', sa.String(), nullable=False),
+    sa.Column('phone_no', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
@@ -45,6 +46,7 @@ def upgrade():
     sa.Column('end_date', sa.Date(), nullable=False),
     sa.Column('is_picked_up', sa.Boolean(), nullable=True),
     sa.Column('is_delivered', sa.Boolean(), nullable=True),
+    sa.Column('item', sa.String(length=255), nullable=False),
     sa.ForeignKeyConstraint(['storage_slot_id'], ['storage_slot.id'], name=op.f('fk_order_storage_slot_id_storage_slot')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_order_user_id_user')),
     sa.PrimaryKeyConstraint('id')
@@ -63,6 +65,7 @@ def upgrade():
     sa.Column('order_id', sa.Integer(), nullable=False),
     sa.Column('delivery_date', sa.Date(), nullable=False),
     sa.Column('delivery_address', sa.String(length=100), nullable=False),
+    sa.Column('pickup_location', sa.String(length=100), nullable=True),
     sa.ForeignKeyConstraint(['order_id'], ['order.id'], name=op.f('fk_delivery_order_id_order')),
     sa.PrimaryKeyConstraint('id')
     )

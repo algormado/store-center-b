@@ -24,3 +24,7 @@ class Unit(db.Model, SerializerMixin):
         self.features = features
         self.images = images
         self.storage_slot_id = storage_slot_id
+    def to_dict(self):
+        unit_dict = super().to_dict()
+        unit_dict['storage_slot'] = self.storage_slot.to_dict()
+        return unit_dict

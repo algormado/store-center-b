@@ -14,8 +14,9 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String, nullable=False, unique=True)
     _password_hash = db.Column(db.String)
     role = db.Column(db.String, nullable=False)
+    phone_no = db.Column(db.Integer)
     
-    serialize_only = ('id', 'username', 'email')
+    serialize_only = ('id', 'username', 'email', 'phone_no')
     
 
     @validates('username')
@@ -51,6 +52,15 @@ class User(db.Model, SerializerMixin):
 
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password)
+    
+    
+    def __init__(self, username, email, role, phone_no=None, password=None):
+        self.username = username
+        self.email = email
+        self.role = role
+        self.phone_no = phone_no
+        if password:
+            self.password = password
 
     def __repr__(self):
         return f'User {self.username}, ID: {self.id}'
