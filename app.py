@@ -302,6 +302,22 @@ class CheckSession(Resource):
                 return user.to_dict()
         
         return {},204
+    
+class UserResource(Resource):
+    def get(self):
+        users = User.query.all()
+        return [user.to_dict() for user in users], 200
+
+    def post(self):
+        data = request.get_json()
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=data['password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return new_user.to_dict(), 201
 
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(OrderResource, '/orders')
@@ -317,6 +333,7 @@ api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(UserResource, '/users', endpoint='users')
 
 if __name__ == '__main__':
     app.run( debug=True)
