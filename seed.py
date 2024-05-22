@@ -101,7 +101,7 @@ def seed_users(num_users=50):
             username=fake.user_name(),
             email=fake.email(),
             role=role,
-            phone_no=fake.phone_number(),
+            phone_no = fake.phone_number(),
             password="password" 
         )
         users.append(user)

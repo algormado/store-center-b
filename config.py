@@ -14,7 +14,7 @@ import os
 
 # Instantiate app, set attributes
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://store_center_i2ii_user:nOTZk5gxnUHpKHPl4kSYK2jEayUUjbo1@dpg-cp6uh8nsc6pc73cnggt0-a.oregon-postgres.render.com/store_center_i2ii'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://store_center_na7i_user:Q4i1bMQVRjRPJcfuou9Gp1yxoHJtvCri@dpg-cp73amuv3ddc73fta2vg-a.oregon-postgres.render.com/store_center_na7i'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.json.compact = False
