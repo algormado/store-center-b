@@ -6,7 +6,7 @@ from models.order import Order
 from models.storage_slot import Storage_slot
 from models.user import User
 from models.unit import Unit
-
+from flask import abort
 
 
 @app.route('/')
@@ -170,7 +170,7 @@ class UnitByID(Resource):
     def get(self, id):
         unit = Unit.query.get(id)
         if not unit:
-            ValueError(404, description="Unit not found")
+            abort(404, description="Unit not found")
         return make_response(jsonify(unit.to_dict()), 200)
     
     def patch(self, id):
