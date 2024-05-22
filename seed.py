@@ -97,11 +97,12 @@ def seed_users(num_users=50):
     users = []
     for _ in range(num_users):
         role = rc(["admin", "client", "employee"])
+        phone_no = fake.bothify(text='########')  # Generate a 8-digit phone number
         user = User(
             username=fake.user_name(),
             email=fake.email(),
             role=role,
-            phone_no=fake.phone_number(),
+            phone_no=phone_no,
             password="password" 
         )
         users.append(user)
@@ -109,8 +110,13 @@ def seed_users(num_users=50):
     db.session.commit()
     return users
 
+
 def seed_orders(num_orders=50):
     users = User.query.all()
+    if not users:
+        print("No users found, skipping orders seeding")
+        return
+
     slots = Storage_slot.query.all()
     items = ["TV", "Food", "Furniture", "Clothing", "Electronics", "Books", "Toys", "Appliances", "Tools", "Sports Equipment"]
 
@@ -134,22 +140,28 @@ def seed_orders(num_orders=50):
     db.session.commit()
 
 
+
 def seed_deliveries(num_deliveries=20):
     orders = Order.query.all()
+    if not orders:
+        print("No orders found, skipping deliveries seeding")
+        return
+
     deliveries = []
     for _ in range(num_deliveries):
         delivery_date = datetime.now() + timedelta(days=randint(1, 30))
-        order = rc(orders)
+        order = random.choice(orders)
         delivery = Delivery(
             order_id=order.id,
             delivery_date=delivery_date,
-            delivery_address="Nairobi",  # Set the delivery address to "Nairobi"
-            pickup_location=fake.address()  # Continue using Faker for pickup location
+            delivery_address="Nairobi",
+            pickup_location=fake.address()
         )
         deliveries.append(delivery)
         db.session.add(delivery)
     db.session.commit()
     return deliveries
+
 
 if __name__ == '__main__':
     with app.app_context():
@@ -165,10 +177,10 @@ if __name__ == '__main__':
         storage_slots = seed_storage_slots()
         print("Seeding units...")
         units = seed_units(storage_slots)
-        print("Seeding users...")
-        users = seed_users()
         print("Seeding orders...")
         orders = seed_orders()
         print("Seeding deliveries...")
         deliveries = seed_deliveries()
+        print("Seeding users...")
+        users = seed_users()
         print("Seed completed successfully!")
