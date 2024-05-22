@@ -1,4 +1,4 @@
-from flask import request,session,jsonify,make_response,abort
+from flask import request,session,jsonify,make_response
 from flask_restful import Resource
 from config import app, db, api
 from models.delivery import Delivery
@@ -6,7 +6,7 @@ from models.order import Order
 from models.storage_slot import Storage_slot
 from models.user import User
 from models.unit import Unit
-
+from flask import abort
 
 
 @app.route('/')
@@ -171,7 +171,7 @@ class UnitByID(Resource):
         unit = Unit.query.get(id)
         if not unit:
             abort(404, description="Unit not found")
-        return jsonify(unit.to_dict())
+        return make_response(jsonify(unit.to_dict()), 200)
     
     def patch(self, id):
         unit = Unit.query.get(id)
