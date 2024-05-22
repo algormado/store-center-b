@@ -17,6 +17,7 @@ class Order(db.Model, SerializerMixin):
     end_date = db.Column(db.Date, nullable=False)
     is_picked_up = db.Column(Boolean, default=False, nullable=False)
     is_delivered = db.Column(Boolean, default=False, nullable=False)
+    item = db.Column(db.String,nullable = False)
   
 
     deliveries = db.relationship('Delivery', backref='order')

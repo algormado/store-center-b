@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-
 # Standard library imports
 from random import randint, choice as rc
 from datetime import datetime, timedelta
 import random
-
 # Remote library imports
 from faker import Faker
-
 # Local imports
 from app import app, db
 from models.delivery import Delivery
@@ -16,30 +13,65 @@ from models.storage_slot import Storage_slot
 from models.unit import Unit  # Ensure this path matches your project structure
 from models.user import User
 
+fake = Faker()
+
 def seed_storage_slots(num_slots=50):
     slot_sizes = {
-        "small": {"dimensions": ["5'x5'", "5'x10'", "5'x15'"], "what_can_fit": ["Small items like bags, suitcases, and boxes", "Contents of a small one-bedroom apartment", "Seasonal decorations", "Sports equipment"]},
-        "medium": {"dimensions": ["10'x10'", "10'x15'", "10'x20'"], "what_can_fit": ["Furniture from a one or two-bedroom apartment", "Appliances", "Large boxes", "Seasonal items and sports equipment"]},
-        "large": {"dimensions": ["15'x15'", "20'x20'", "20'x25'"], "what_can_fit": ["Contents of a three to four-bedroom house", "Major appliances", "Large furniture items", "Large boxes", "Commercial inventory"]}
+        "small": {
+            "dimensions": ["5'x5'", "5'x10'", "5'x15'"],
+            "what_can_fit": [
+                "Small items like bags, suitcases, and boxes",
+                "Contents of a small one-bedroom apartment",
+                "Seasonal decorations",
+                "Sports equipment"
+            ]
+        },
+        "medium": {
+            "dimensions": ["10'x10'", "10'x15'", "10'x20'"],
+            "what_can_fit": [
+                "Furniture from a one or two-bedroom apartment",
+                "Appliances",
+                "Large boxes",
+                "Seasonal items and sports equipment"
+            ]
+        },
+        "large": {
+            "dimensions": ["15'x15'", "20'x20'", "20'x25'"],
+            "what_can_fit": [
+                "Contents of a three to four-bedroom house",
+                "Major appliances",
+                "Large furniture items",
+                "Large boxes",
+                "Commercial inventory"
+            ]
+        }
     }
     
     slots = []
     for _ in range(num_slots):
-        size = rc(list(slot_sizes.keys()))
+        size = random.choice(list(slot_sizes.keys()))
+        dimension = random.choice(slot_sizes[size]["dimensions"])
+        
+        # Extract numerical values for dimensions
+        try:
+            width, length = map(int, dimension.replace("'", "").split('x'))
+            square_feet = width * length
+        except ValueError:
+            print(f"Error processing dimensions: {dimension}")
+            continue
+        
         slot = Storage_slot(
             size=size,
-            price=randint(50, 200),
-            unit_details ={"squareFeet": randint(25, 200), "size": rc(slot_sizes[size]["dimensions"])},
+            square_feet=square_feet,
+            price=random.randint(50, 200),
+            unit_details={"squareFeet": square_feet, "size": dimension},
             what_can_fit=slot_sizes[size]["what_can_fit"],
-            availability=False 
+            availability=False
         )
         slots.append(slot)
         db.session.add(slot)
     db.session.commit()
     return slots
-
-import random
-from models import Unit
 
 def seed_units(storage_slots):
     features_pool = [
@@ -47,7 +79,6 @@ def seed_units(storage_slots):
         ["Climate controlled", "24/7 access", "Drive-up access"],
         ["Climate controlled", "24/7 access", "Ground floor", "Drive-up access", "Security cameras"]
     ]
-
     units = []
     for slot in storage_slots:
         for i in range(randint(1, 5)):  
@@ -61,7 +92,6 @@ def seed_units(storage_slots):
             db.session.add(unit)
     db.session.commit()
     return units
-
 
 def seed_users(num_users=50):
     users = []
@@ -87,26 +117,24 @@ def seed_orders(num_orders=50):
     for _ in range(num_orders):
         start_date = datetime.now() - timedelta(days=random.randint(1, 30))
         end_date = start_date + timedelta(days=random.randint(1, 30))
-        user = rc(users)
-        storage_slot = rc(slots)
-        item = rc(items)
-
+        user = random.choice(users)
+        storage_slot = random.choice(slots)
+        item = random.choice(items)
         order = Order(
             user_id=user.id,
             storage_slot_id=storage_slot.id,
             start_date=start_date,
             end_date=end_date,
             item=item,
-            is_picked_up = False,
-            is_delivered = False
-            
+            is_picked_up=False,
+            is_delivered=False
         )
 
         db.session.add(order)
     db.session.commit()
 
+
 def seed_deliveries(num_deliveries=20):
-    fake = Faker()
     orders = Order.query.all()
     deliveries = []
     for _ in range(num_deliveries):
@@ -124,7 +152,6 @@ def seed_deliveries(num_deliveries=20):
     return deliveries
 
 if __name__ == '__main__':
-    fake = Faker()
     with app.app_context():
         print("Clearing db...")
         Delivery.query.delete()
@@ -134,20 +161,14 @@ if __name__ == '__main__':
         User.query.delete()
 
         print("Starting seed...")
-
         print("Seeding storage slots...")
         storage_slots = seed_storage_slots()
-
         print("Seeding units...")
         units = seed_units(storage_slots)
-
         print("Seeding users...")
         users = seed_users()
-
         print("Seeding orders...")
         orders = seed_orders()
-
         print("Seeding deliveries...")
         deliveries = seed_deliveries()
-
         print("Seed completed successfully!")

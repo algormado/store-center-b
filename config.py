@@ -14,7 +14,7 @@ import os
 
 # Instantiate app, set attributes
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://store_center_l8gb_user:r8PCFhVJNzwZ4n7peJ9qGYZeA9jGm2lD@dpg-cp5jas0l5elc73e5e3tg-a.oregon-postgres.render.com/store_center_l8gb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.json.compact = False
