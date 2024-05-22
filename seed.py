@@ -46,27 +46,26 @@ def seed_storage_slots(num_slots=50):
             ]
         }
     }
-    
+
     slots = []
     for _ in range(num_slots):
         size = random.choice(list(slot_sizes.keys()))
         dimension = random.choice(slot_sizes[size]["dimensions"])
-        
-        # Extract numerical values for dimensions
+
         try:
             width, length = map(int, dimension.replace("'", "").split('x'))
             square_feet = width * length
         except ValueError:
             print(f"Error processing dimensions: {dimension}")
             continue
-        
+
         slot = Storage_slot(
             size=size,
             square_feet=square_feet,
             price=random.randint(50, 200),
             unit_details={"squareFeet": square_feet, "size": dimension},
             what_can_fit=slot_sizes[size]["what_can_fit"],
-            availability=False
+            availability=True
         )
         slots.append(slot)
         db.session.add(slot)
@@ -81,7 +80,7 @@ def seed_units(storage_slots):
     ]
     units = []
     for slot in storage_slots:
-        for i in range(randint(1, 5)):  
+        for i in range(randint(1, 5)):
             unit = Unit(
                 unit_number=f"{slot.size[0].upper()}{random.randint(100, 999)}",
                 features=random.choice(features_pool),
@@ -111,6 +110,7 @@ def seed_users(num_users=50):
     return users
 
 
+
 def seed_orders(num_orders=50):
     users = User.query.all()
     if not users:
@@ -118,6 +118,10 @@ def seed_orders(num_orders=50):
         return
 
     slots = Storage_slot.query.all()
+    if not slots:
+        print("No storage slots found, skipping orders seeding")
+        return
+
     items = ["TV", "Food", "Furniture", "Clothing", "Electronics", "Books", "Toys", "Appliances", "Tools", "Sports Equipment"]
 
     for _ in range(num_orders):
@@ -135,11 +139,8 @@ def seed_orders(num_orders=50):
             is_picked_up=False,
             is_delivered=False
         )
-
         db.session.add(order)
     db.session.commit()
-
-
 
 def seed_deliveries(num_deliveries=20):
     orders = Order.query.all()
@@ -162,7 +163,6 @@ def seed_deliveries(num_deliveries=20):
     db.session.commit()
     return deliveries
 
-
 if __name__ == '__main__':
     with app.app_context():
         print("Clearing db...")
@@ -177,10 +177,10 @@ if __name__ == '__main__':
         storage_slots = seed_storage_slots()
         print("Seeding units...")
         units = seed_units(storage_slots)
+        print("Seeding users...")
+        users = seed_users()
         print("Seeding orders...")
         orders = seed_orders()
         print("Seeding deliveries...")
         deliveries = seed_deliveries()
-        print("Seeding users...")
-        users = seed_users()
         print("Seed completed successfully!")
