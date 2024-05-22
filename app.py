@@ -1,4 +1,4 @@
-from flask import request,session,jsonify,make_response
+from flask import request,session,jsonify,make_response,abort
 from flask_restful import Resource
 from config import app, db, api
 from models.delivery import Delivery
@@ -170,8 +170,8 @@ class UnitByID(Resource):
     def get(self, id):
         unit = Unit.query.get(id)
         if not unit:
-            ValueError(404, description="Unit not found")
-        return make_response(jsonify(unit.to_dict()), 200)
+            abort(404, description="Unit not found")
+        return jsonify(unit.to_dict())
     
     def patch(self, id):
         unit = Unit.query.get(id)
