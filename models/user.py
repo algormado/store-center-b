@@ -18,6 +18,8 @@ class User(db.Model, SerializerMixin):
     
     serialize_only = ('id', 'username', 'email', 'phone_no')
     
+    orders = db.relationship("Order",back_populates= "user",cascade="all, delete-orphan")
+    
 
     @validates('username')
     def validate_username(self, key, username):
@@ -62,5 +64,15 @@ class User(db.Model, SerializerMixin):
         if password:
             self.password = password
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'role': self.role,
+            'phone_no': self.phone_no,
+            'username ': self.username,
+            ' _password_hash':self. _password_hash
+            
+        }
     def __repr__(self):
         return f'User {self.username}, ID: {self.id}'

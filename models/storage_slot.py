@@ -19,7 +19,9 @@ class Storage_slot(db.Model, SerializerMixin):
     units = db.relationship("Unit", back_populates="storage_slot", cascade="all, delete-orphan")
 
     serialize_only = ('id', 'size', 'square_feet', 'price', 'availability', 'unit_details_str', 'what_can_fit_str')
-
+    
+    orders = db.relationship("Order",back_populates= "storage_slot",cascade="all, delete-orphan")
+  
     @validates('availability')
     def validate_availability(self, key, value):
         if value is None:
