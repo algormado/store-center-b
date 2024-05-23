@@ -6,7 +6,7 @@ from models.order import Order
 from models.storage_slot import Storage_slot
 from models.user import User
 from models.unit import Unit
-from flask import abort
+
 
 
 @app.route('/')
@@ -59,7 +59,7 @@ class OrderByID(Resource):
             order.start_date = data['start_date']
         if 'end_date' in data:
             order.end_date = data['end_date']
-        if 'item' in data:  # New field
+        if 'item' in data: 
             order.item = data['item']
         if 'is_picked_up' in data:
             order.is_picked_up = data['is_picked_up']
@@ -170,7 +170,7 @@ class UnitByID(Resource):
     def get(self, id):
         unit = Unit.query.get(id)
         if not unit:
-            abort(404, description="Unit not found")
+            ValueError(404, description="Unit not found")
         return make_response(jsonify(unit.to_dict()), 200)
     
     def patch(self, id):
@@ -308,7 +308,9 @@ class UserResource(Resource):
         new_user = User(
             username=data['username'],
             email=data['email'],
-            password_hash=data['password']
+            # password_hash=data['password'],
+            phone_no= data['phone_no'],
+            role= data['role']
         )
         db.session.add(new_user)
         db.session.commit()

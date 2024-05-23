@@ -96,7 +96,7 @@ def seed_users(num_users=50):
     users = []
     for _ in range(num_users):
         role = rc(["admin", "client", "employee"])
-        phone_no = fake.bothify(text='########')  # Generate a 8-digit phone number
+        phone_no = fake.bothify(text='########') 
         user = User(
             username=fake.user_name(),
             email=fake.email(),
